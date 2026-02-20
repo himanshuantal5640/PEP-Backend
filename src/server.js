@@ -1,27 +1,33 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import connectDB from './config/db.js';
-import cookieParser from 'cookie-parser';
-dotenv.config();
-const app = express();
+// import dotenv from "dotenv";
+// dotenv.config();
+import express from "express";
+import "dotenv/config"
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import assetRoutes from "./routes/assestRoute.js"
 
-// Connect to MongoDB
+// console.log("EMAIL_USER:", process.env.EMAIL_USER);
+// console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+
+
 connectDB();
 
-// Middleware
+const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust this to your frontend URL
-  credentials: true, // Allow cookies to be sent
+  origin: "https://creators-connect-frontend.vercel.app",
+  secure: true,
+  credentials: true
 }));
 
-app.use('/api/auth', require('./routes/auth.js'));
+app.use("/api/auth", authRoutes);
+app.use("/api/assets", assetRoutes);
 
-const PORT = process.env.PORT || 5000;  
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log("Server running on port", process.env.PORT);
 });
-
